@@ -1,20 +1,67 @@
-﻿using System.Net;
-using RestSharp;
-using SimpleJson;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace BusBoard.ConsoleApp
 {
   class Program
   {
+    private static TfLAPI tflAPI = new TfLAPI();
+    
     static void Main(string[] args)
     {
       ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+      
+      Console.WriteLine("Please enter a postcode: ");
 
-      TfLAPI api = new TfLAPI();
+      string postcode = Console.ReadLine();
       
-      string request = "490008660N/Arrivals";
-      
-      JsonArray response = api.Execute<JsonArray>(request);
+      postcode = postcode.Replace(" ", String.Empty);
+      postcode = postcode.ToUpper();
+
+      List<StopInfo> stops = findStops(postcode, 2);
+
+      foreach (StopInfo stop in stops)
+      {
+        string busList = tflAPI.Request(stop.id + "/Arrivals");
+
+        List<BusInfo> busInfoList = JsonConvert.DeserializeObject<List<BusInfo>>(busList);
+        busInfoList.Sort();
+        List<BusInfo> fiveBuses = busInfoList.Take(5).ToList();
+        
+        Console.WriteLine("Stop: " + stop.commonName);
+        Console.WriteLine("Distance: " + stop.distance);
+        Console.WriteLine("Buses: ");
+        foreach (BusInfo bus in fiveBuses)
+        {
+          Console.WriteLine("Line: " + bus.lineId + ", Destination: " + bus.destinationName + ", Expected arrival: " + bus.expectedArrival);
+        }
+      } 
+    }
+
+    private static List<StopInfo> findStops(string postcode, int num)
+    {
+        PostcodeAPI postAPI = new PostcodeAPI();
+
+        string postResponse = postAPI.Execute(postcode);
+        JObject json = JObject.Parse(postResponse);
+
+        string result = json["result"].ToString();
+
+        PostcodeInfo postInfo = JsonConvert.DeserializeObject<PostcodeInfo>(result);
+
+        string tflResponse = tflAPI.stopTypes("NaptanPublicBusCoachTram", postInfo.latitude, postInfo.longitude);
+        JObject jStops = JObject.Parse(tflResponse);
+
+        string array = jStops["stopPoints"].ToString();
+
+        List<StopInfo> stops = JsonConvert.DeserializeObject<List<StopInfo>>(array);
+        stops.Sort();
+
+        return stops.Take(num).ToList();
     }
   }
 }
