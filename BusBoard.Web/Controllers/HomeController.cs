@@ -32,12 +32,13 @@ namespace BusBoard.Web.Controllers
       {
         buses = busInfoList(postcode);
       }
-      catch
+      catch (NullReferenceException)
       {
-        About();
+        Console.WriteLine("Error caught");
+        postcode = "Error error error";
       }
       
-      var info = new BusInfo(selection.Postcode, buses);
+      var info = new BusInfo(postcode, buses);
       
       return View(info);        
     }
