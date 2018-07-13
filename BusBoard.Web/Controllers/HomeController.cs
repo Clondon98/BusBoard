@@ -42,7 +42,7 @@ namespace BusBoard.Web.Controllers
       return View(info);        
     }
 
-    private List<ConsoleApp.BusInfo> busInfoList(string PostCode)
+    public static List<ConsoleApp.BusInfo> busInfoList(string PostCode)
     {
       List<StopInfo> stops = findStops(PostCode, 2);
       List<ConsoleApp.BusInfo> bigBusList = new List<ConsoleApp.BusInfo>();

@@ -1,5 +1,5 @@
 ﻿@using BusBoard.ConsoleApp
-@using Microsoft.Ajax.Utilities
+@using BusBoard.Web.Controllers
 @model BusBoard.Web.ViewModels.BusInfo
 @{
   ViewBag.Title = "Bus Information";
@@ -7,6 +7,7 @@
 
 <head>
     <meta http-equiv="refresh" content="30"/>
+    @HomeController.busInfoList(Model.PostCode);
 </head>
 
 <h2>BusInfo</h2>
