@@ -26,7 +26,7 @@ namespace BusBoard.Web.Controllers
       // Write code here to populate the view model with info from the APIs.
       // Then modify the view (in Views/Home/BusInfo.cshtml) to render upcoming buses.
       string postcode = selection.Postcode.Replace(" ", String.Empty).ToUpper();
-      List<ConsoleApp.BusInfo> buses = new List<ConsoleApp.BusInfo>();
+      List<ConsoleApp.BusInfo> buses;
 
       try
       {
