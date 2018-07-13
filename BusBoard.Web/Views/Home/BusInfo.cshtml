@@ -20,6 +20,7 @@
             <th>Line</th>
             <th>Destination</th>
             <th>Arriving At</th>
+            <th>Distance</th>
             <th>Arrival Time</th>
             @foreach (BusInfo b in @Model.bigBusList)
             {
@@ -27,6 +28,7 @@
                     <td>@b.lineId.ToUpper()</td>
                     <td>@b.destinationName</td>
                     <td>@b.stationName</td>
+                    <td>@Math.Round(b.stopDistance, 0)</td>
                     <td>@b.expected.ToString("HH:mm")</td>
                 </tr>
             }

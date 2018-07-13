@@ -18,6 +18,9 @@ namespace BusBoard.ConsoleApp
         
         [JsonIgnore]
         public DateTime expected { get; set; }
+        
+        [JsonIgnore]
+        public double stopDistance { get; set; }
 
         [OnDeserialized]
         internal void makeDate(StreamingContext streamingContext)

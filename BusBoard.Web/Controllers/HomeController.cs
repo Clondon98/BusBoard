@@ -55,6 +55,8 @@ namespace BusBoard.Web.Controllers
         busInfoList.Sort();
         List<ConsoleApp.BusInfo> fiveBuses = busInfoList.Take(5).ToList();
 
+        foreach (ConsoleApp.BusInfo bus in fiveBuses) bus.stopDistance = stop.distance;
+
         bigBusList.AddRange(fiveBuses);
 
       }
