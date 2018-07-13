@@ -1,27 +1,39 @@
 ﻿@using BusBoard.ConsoleApp
+@using Microsoft.Ajax.Utilities
 @model BusBoard.Web.ViewModels.BusInfo
 @{
   ViewBag.Title = "Bus Information";
 }
 
+<head>
+    <meta http-equiv="refresh" content="30"/>
+</head>
+
 <h2>BusInfo</h2>
 
 <div class="row">
     <p>You entered postcode @Model.PostCode</p>
-    <table style="width:100%">
-        <tr>
+    @if (Model.bigBusList.Count != 0)
+    {
+        <table style="width: 100%">
+            <tr>
             <th>Line</th>
             <th>Destination</th>
             <th>Arriving At</th>
             <th>Arrival Time</th>
-        @foreach (BusInfo b in @Model.bigBusList)
-        {
-            <tr>
-                <td>@b.lineId.ToUpper()</td>
-                <td>@b.destinationName</td>
-                <td>@b.stationName</td>
-                <td>@b.expected.ToString("HH:mm")</td>
-            </tr>
-        }
-    </table>
+            @foreach (BusInfo b in @Model.bigBusList)
+            {
+                <tr>
+                    <td>@b.lineId.ToUpper()</td>
+                    <td>@b.destinationName</td>
+                    <td>@b.stationName</td>
+                    <td>@b.expected.ToString("HH:mm")</td>
+                </tr>
+            }
+        </table>
+    }
+    else
+    {
+        <p>There are no avaliable buses for this postcode.</p>
+    }
 </div>
