@@ -8,9 +8,16 @@
 
 <div class="row">
     <p>You entered postcode @Model.PostCode</p>
-    
+    <tr>
+    <th>Line</th>
+    <th>Destination</th>
+    <th>Arrival Time</th>
     @foreach (BusInfo b in @Model.bigBusList)
     {
-        <p>@b.toString()</p>
+        <tr>
+            <th>@b.lineId</th>
+            <th>@b.destinationName</th>
+            <th>@b.expected.ToString("HH:mm")</th>
+        </tr>
     }
 </div>
