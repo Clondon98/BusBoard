@@ -14,7 +14,7 @@ namespace BusBoard.Web.ViewModels
     
     public BusInfo(string postcode, List<ConsoleApp.BusInfo> buses)
     {
-      PostCode = postcode.Replace(" ", String.Empty).ToUpper();
+      PostCode = postcode;
       bigBusList = buses;
     }  
   }
