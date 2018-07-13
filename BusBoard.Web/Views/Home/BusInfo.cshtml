@@ -1,4 +1,5 @@
-﻿@model BusBoard.Web.ViewModels.BusInfo
+﻿@using BusBoard.ConsoleApp
+@model BusBoard.Web.ViewModels.BusInfo
 @{
   ViewBag.Title = "Bus Information";
 }
@@ -8,5 +9,8 @@
 <div class="row">
     <p>You entered postcode @Model.PostCode</p>
     
-    <p>One of the buses is @Model.bigBusList[1].toString()</p>
+    @foreach (BusInfo b in @Model.bigBusList)
+    {
+        <p>@b.toString()</p>
+    }
 </div>
