@@ -34,8 +34,6 @@ namespace BusBoard.Web.Controllers
       }
       catch (NullReferenceException)
       {
-        Console.WriteLine("Error caught");
-        postcode = "Error error error";
         return View("Error");
       }
       
