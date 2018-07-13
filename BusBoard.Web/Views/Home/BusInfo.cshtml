@@ -17,7 +17,7 @@
         @foreach (BusInfo b in @Model.bigBusList)
         {
             <tr>
-                <td>@b.lineId</td>
+                <td>@b.lineId.ToUpper()</td>
                 <td>@b.destinationName</td>
                 <td>@b.stationName</td>
                 <td>@b.expected.ToString("HH:mm")</td>

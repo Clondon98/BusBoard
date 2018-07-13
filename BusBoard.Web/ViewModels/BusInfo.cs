@@ -9,57 +9,13 @@ namespace BusBoard.Web.ViewModels
 {
   public class BusInfo
   {
-    private static TfLAPI tflAPI = new TfLAPI();
+    public string PostCode { get; set; }
     public List<ConsoleApp.BusInfo> bigBusList = new List<ConsoleApp.BusInfo>();
     
-    public BusInfo(string postcode)
+    public BusInfo(string postcode, List<ConsoleApp.BusInfo> buses)
     {
       PostCode = postcode.Replace(" ", String.Empty).ToUpper();
-      busInfoList();
-    }
-
-    public string PostCode { get; set; }
-
-    public void busInfoList()
-    {
-      List<StopInfo> stops = findStops(PostCode, 2);
-      
-      foreach (StopInfo stop in stops)
-      {
-        string busList = tflAPI.Request(stop.id + "/Arrivals");
-
-        List<ConsoleApp.BusInfo> busInfoList = JsonConvert.DeserializeObject<List<ConsoleApp.BusInfo>>(busList);
-        busInfoList.Sort();
-        List<ConsoleApp.BusInfo> fiveBuses = busInfoList.Take(5).ToList();
-
-        bigBusList.AddRange(fiveBuses);
-
-      }
-      
-      bigBusList.Sort();
-    }
-
-    private static List<StopInfo> findStops(string postcode, int num)
-      {
-        PostcodeAPI postAPI = new PostcodeAPI();
-
-        string postResponse = postAPI.Execute(postcode);
-        JObject json = JObject.Parse(postResponse);
-
-        string result = json["result"].ToString();
-
-        PostcodeInfo postInfo = JsonConvert.DeserializeObject<PostcodeInfo>(result);
-
-        string tflResponse = tflAPI.stopTypes("NaptanPublicBusCoachTram", postInfo.latitude, postInfo.longitude);
-        JObject jStops = JObject.Parse(tflResponse);
-
-        string array = jStops["stopPoints"].ToString();
-
-        List<StopInfo> stops = JsonConvert.DeserializeObject<List<StopInfo>>(array);
-        stops.Sort();
-
-        return stops.Take(num).ToList();
-      }
-   
+      bigBusList = buses;
+    }  
   }
 }
