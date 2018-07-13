@@ -36,6 +36,7 @@ namespace BusBoard.Web.Controllers
       {
         Console.WriteLine("Error caught");
         postcode = "Error error error";
+        return View("Error");
       }
       
       var info = new BusInfo(postcode, buses);
