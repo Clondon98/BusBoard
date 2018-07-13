@@ -12,12 +12,14 @@
         <tr>
             <th>Line</th>
             <th>Destination</th>
+            <th>Arriving At</th>
             <th>Arrival Time</th>
         @foreach (BusInfo b in @Model.bigBusList)
         {
             <tr>
                 <td>@b.lineId</td>
                 <td>@b.destinationName</td>
+                <td>@b.stationName</td>
                 <td>@b.expected.ToString("HH:mm")</td>
             </tr>
         }
