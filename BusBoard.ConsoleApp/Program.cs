@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Runtime.Remoting.Messaging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -33,12 +34,14 @@ namespace BusBoard.ConsoleApp
         List<BusInfo> fiveBuses = busInfoList.Take(5).ToList();
         
         Console.WriteLine("Stop: " + stop.commonName);
-        Console.WriteLine("Distance: " + stop.distance);
+        Console.WriteLine("Distance: " + Math.Round(stop.distance, 0) + "m");
         Console.WriteLine("Buses: ");
         foreach (BusInfo bus in fiveBuses)
         {
-          Console.WriteLine("Line: " + bus.lineId + ", Destination: " + bus.destinationName + ", Expected arrival: " + bus.expectedArrival);
+          Console.WriteLine("Line: " + bus.lineId + ", Destination: " + bus.destinationName + ", Expected arrival: " + bus.expected.ToString("HH:mm"));
         }
+
+        Console.WriteLine();
       } 
     }
 

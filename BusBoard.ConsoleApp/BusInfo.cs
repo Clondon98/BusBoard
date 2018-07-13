@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace BusBoard.ConsoleApp
 {
@@ -13,7 +15,16 @@ namespace BusBoard.ConsoleApp
         public string destinationName { get; set; }
         public string expectedArrival { get; set; }
         public int timeToStation { get; set; }
+        
+        [JsonIgnore]
+        public DateTime expected { get; set; }
 
+        [OnDeserialized]
+        internal void makeDate(StreamingContext streamingContext)
+        {
+            expected = DateTime.Parse(expectedArrival);
+        }
+        
         public string toString()
         {
             return id + " " + timeToStation;
