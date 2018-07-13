@@ -14,7 +14,7 @@ namespace BusBoard.Web.ViewModels
     
     public BusInfo(string postcode)
     {
-      PostCode = postcode;
+      PostCode = postcode.Replace(" ", String.Empty).ToUpper();
       busInfoList();
     }
 
@@ -22,9 +22,6 @@ namespace BusBoard.Web.ViewModels
 
     public void busInfoList()
     {
-      PostCode = PostCode.Replace(" ", String.Empty);
-      PostCode = PostCode.ToUpper();
-
       List<StopInfo> stops = findStops(PostCode, 2);
       
       foreach (StopInfo stop in stops)
