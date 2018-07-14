@@ -22,10 +22,11 @@ namespace BusBoard.ConsoleApp
             return Execute(request);
         }
 
-        public string stopTypes(string stopType, double lat, double lon)
+        public string stopTypes(string stopType, int radius, double lat, double lon)
         {
             var request = new RestRequest();
             request.AddQueryParameter("stopTypes", stopType);
+            request.AddQueryParameter("radius", radius.ToString());
             request.AddQueryParameter("lat", lat.ToString());
             request.AddQueryParameter("lon", lon.ToString());
             request.AddQueryParameter("app_id", _accountSid);

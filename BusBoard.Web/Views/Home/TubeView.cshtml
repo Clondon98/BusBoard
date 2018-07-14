@@ -1,8 +1,8 @@
-﻿@using BusBoard.ConsoleApp
+@using BusBoard.ConsoleApp
 @using BusBoard.Web.Controllers
-@model BusBoard.Web.ViewModels.BusInfo
+@model BusBoard.Web.ViewModels.TubeView
 @{
-  ViewBag.Title = "Bus Information";
+    ViewBag.Title = "Bus Information";
 }
 
 <head>
@@ -13,20 +13,22 @@
 
 <div class="row">
     <p>You entered postcode @Model.PostCode</p>
-    @if (Model.bigBusList.Count != 0)
+    @if (Model.bigTubeList.Count != 0)
     {
         <table style="width: 100%">
             <tr>
             <th>Line</th>
             <th>Destination</th>
+            <th>Platform</th>
             <th>Arriving At</th>
             <th>Distance (m)</th>
             <th>Arrival Time</th>
-            @foreach (BusInfo b in @Model.bigBusList)
-            {
+            @foreach (TubeInfo b in @Model.bigTubeList)
+            {   
                 <tr>
-                    <td>@b.lineId.ToUpper()</td>
-                    <td>@b.destinationName</td>
+                    <td>@b.lineName.ToUpper()</td>
+                    <td>@b.towards</td>
+                    <td>@b.platformName</td>
                     <td>@b.stationName</td>
                     <td>@Math.Round(b.stopDistance, 0)</td>
                     <td>@b.expected.ToString("HH:mm")</td>

@@ -4,11 +4,9 @@ namespace BusBoard.ConsoleApp
 {
     public class StopInfo : IComparable
     {
-        public string id;
-        public string[] modes;
+        public string naptanId;
         public string commonName;
         public double distance;
-        public string placeType;
         
         public int CompareTo(object obj)
         {
@@ -21,13 +19,13 @@ namespace BusBoard.ConsoleApp
             }
             else
             {
-                return String.Compare(this.id, it.id);
+                return String.Compare(this.naptanId, it.naptanId);
             }
         }
 
         public string toString()
         {
-            return id;
+            return naptanId;
         }
     }    
 }

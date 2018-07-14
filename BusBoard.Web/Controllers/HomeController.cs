@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web.Mvc;
 using BusBoard.ConsoleApp;
 using BusBoard.Web.Models;
+using BusBoard.Web.ViewModels;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using BusInfo = BusBoard.Web.ViewModels.BusInfo;
@@ -37,38 +38,98 @@ namespace BusBoard.Web.Controllers
       {
         return View("Error");
       }
-      
+
       var info = new BusInfo(postcode, buses);
-      
-      return View(info);        
+
+      return View(info);
     }
 
-    public static List<ConsoleApp.BusInfo> busInfoList(string PostCode)
+    [HttpGet]
+    public ActionResult TubeView(PostcodeSelection selection)
     {
-      List<StopInfo> stops = findStops(PostCode, 2);
-      List<ConsoleApp.BusInfo> bigBusList = new List<ConsoleApp.BusInfo>();
-      
+      string postcode;
+      List<ConsoleApp.TubeInfo> tubes;
+
+      try
+      {
+        postcode = selection.Postcode.Replace(" ", String.Empty).ToUpper();
+        tubes = tubeInfoList(postcode);
+      }
+      catch (NullReferenceException)
+      {
+        return View("Error");
+      }
+
+      var info = new TubeView(postcode, tubes);
+
+      return View(info);
+    }
+
+    public List<TubeInfo> tubeInfoList(string PostCode)
+    {
+      List<StopInfo> stops = findStops(PostCode, "NaptanMetroStation", Int32.MaxValue);
+      List<ConsoleApp.TubeInfo> bigTubeList = new List<ConsoleApp.TubeInfo>();
+
       foreach (StopInfo stop in stops)
       {
-        string busList = tflAPI.Request(stop.id + "/Arrivals");
+        string tubeList = tflAPI.Request(stop.naptanId + "/Arrivals");
+        
+        List<ConsoleApp.TubeInfo> tubeInfoList;
 
-        List<ConsoleApp.BusInfo> busInfoList = JsonConvert.DeserializeObject<List<ConsoleApp.BusInfo>>(busList);
-        busInfoList.Sort();
-        List<ConsoleApp.BusInfo> fiveBuses = busInfoList.Take(5).ToList();
+        try
+        {
+          tubeInfoList = JsonConvert.DeserializeObject<List<ConsoleApp.TubeInfo>>(tubeList);
+        }
+        catch (JsonSerializationException)
+        {
+          tubeInfoList = new List<TubeInfo>();
+          foreach (TubeInfo tube in tubeInfoList) tube.stopDistance = stop.distance;
+        }
 
-        foreach (ConsoleApp.BusInfo bus in fiveBuses) bus.stopDistance = stop.distance;
+        bigTubeList.AddRange(tubeInfoList);
+      }
+
+      bigTubeList.Sort();
+
+      return bigTubeList.Take(20).ToList();
+    }
+
+    public List<ConsoleApp.BusInfo> busInfoList(string PostCode)
+    {
+      List<StopInfo> stops = findStops(PostCode, "NaptanPublicBusCoachTram", Int32.MaxValue);
+      
+      List<ConsoleApp.BusInfo> bigBusList = new List<ConsoleApp.BusInfo>();
+
+      foreach (StopInfo stop in stops)
+      {
+        string busList = tflAPI.Request(stop.naptanId + "/Arrivals");
+
+        List<ConsoleApp.BusInfo> fiveBuses;
+        
+        try
+        {
+          List<ConsoleApp.BusInfo> busInfoList = JsonConvert.DeserializeObject<List<ConsoleApp.BusInfo>>(busList);
+          busInfoList.Sort();
+          fiveBuses = busInfoList.Take(5).ToList();
+
+          foreach (ConsoleApp.BusInfo bus in fiveBuses) bus.stopDistance = stop.distance;
+          }
+            catch (JsonSerializationException)
+          {
+            fiveBuses = new List<ConsoleApp.BusInfo>();
+          }
 
         bigBusList.AddRange(fiveBuses);
 
       }
-      
+
       bigBusList.Sort();
 
       return bigBusList;
     }
-    
 
-    private static List<StopInfo> findStops(string postcode, int num)
+
+    private static List<StopInfo> findStops(string postcode, string type, int num)
     {
       PostcodeAPI postAPI = new PostcodeAPI();
 
@@ -79,18 +140,32 @@ namespace BusBoard.Web.Controllers
 
       PostcodeInfo postInfo = JsonConvert.DeserializeObject<PostcodeInfo>(result);
 
-      string tflResponse = tflAPI.stopTypes("NaptanPublicBusCoachTram", postInfo.latitude, postInfo.longitude);
+      int range = 100;
+      
+      string tflResponse = tflAPI.stopTypes(type, range, postInfo.latitude, postInfo.longitude);
       JObject jStops = JObject.Parse(tflResponse);
 
       string array = jStops["stopPoints"].ToString();
-
+      
       List<StopInfo> stops = JsonConvert.DeserializeObject<List<StopInfo>>(array);
+
+      while (stops.Count == 0 && range <= 1000)
+      {
+        range += 100;
+        tflResponse = tflAPI.stopTypes(type, range, postInfo.latitude, postInfo.longitude);
+        jStops = JObject.Parse(tflResponse);
+
+        array = jStops["stopPoints"].ToString();
+        
+        stops = JsonConvert.DeserializeObject<List<StopInfo>>(array);
+      }
+      
       stops.Sort();
 
-      return stops.Take(num).ToList();
+      return stops;
     }
 
-    public ActionResult About()
+  public ActionResult About()
     {
       ViewBag.Message = "Information about this site";
 
